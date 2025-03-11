@@ -52,6 +52,9 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
                 stmt.setString(2, developer.getLastName());
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows > 0) {
+                    System.out.println("Новый разработчик успешно добавлен");
+                } else {
+                    System.out.println("Не удалось добавить нового разработчика");
                     try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             developer.setId(generatedKeys.getLong(1));
@@ -66,7 +69,6 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
         @Override
         public void update (Developer developer) {
         String sql = "UPDATE Developer SET firstName = ?, lastName = ? WHERE id = ?";
-
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
                  stmt.setString(1, developer.getFirstName());
@@ -84,8 +86,20 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
     }
 
         @Override
-        public void delete (Long id){
-
+        public void delete (Long id) {
+            String sql = "DELETE FROM Developer WHERE id = ?";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, id);
+                int rowsDeleted = stmt.executeUpdate();
+                if (rowsDeleted > 0) {
+                    System.out.println("Разработчик успешно удален");
+                } else {
+                    System.out.println("Не удалось удалить разработчика");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         private Developer mapRowToDeveloper (ResultSet resultSet) throws SQLException {
