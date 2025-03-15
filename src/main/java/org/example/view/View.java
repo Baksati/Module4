@@ -39,7 +39,7 @@ public class View {
                     System.out.println("Введите ID разработчика: ");
                     Long id = scanner.nextLong();
                     System.out.println(developerController.getDeveloperById(id));
-                } catch (NullPointerException e) {  // TODO сделать после задания, обработку ввода текста
+                } catch (NullPointerException e) {
                     System.out.println("ID не найден");
                 }
             } else if (input == 4) {
