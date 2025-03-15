@@ -17,9 +17,7 @@ public class SkillRepositoryImpl implements SkillRepository {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet resultSet = stmt.executeQuery();
-            while (resultSet.next()) {
-                skills.add(mapRowToSkill(resultSet));
-            }
+            while (resultSet.next()) skills.add(mapRowToSkill(resultSet));
         } catch (SQLException e) {
             e.printStackTrace();
         }
