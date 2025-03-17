@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.model.Skill;
+import org.example.model.Status;
 import org.example.repository.SkillRepository;
 import org.example.utils.DatabaseConnection;
 
@@ -42,11 +43,12 @@ public class SkillRepositoryImpl implements SkillRepository {
 
     @Override
     public void save(Skill skill) {
-        String sql = "INSERT INTO Skill (name) VALUES (?)";
+        String sql = "INSERT INTO Skill (name, status_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement
                      (sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, skill.getName());
+            stmt.setString(2, skill.getStatus().name());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("Новый навык разработчику успешно добавлен");
@@ -65,11 +67,12 @@ public class SkillRepositoryImpl implements SkillRepository {
 
     @Override
     public void update(Skill skill) {
-        String sql = "UPDATE Skill SET name = ? WHERE id = ?";
+        String sql = "UPDATE Skill SET name = ?, status_id = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
                  stmt.setString(1, skill.getName());
-                 stmt.setLong(2, skill.getId());
+                 stmt.setString(2, skill.getStatus().name());
+                 stmt.setLong(3, skill.getId());
                  int rowsUpdated = stmt.executeUpdate();
                  if (rowsUpdated > 0) {
                      System.out.println("Данные навыка разработчика успешно облновлены");
@@ -102,6 +105,7 @@ public class SkillRepositoryImpl implements SkillRepository {
         Skill skill = new Skill();
         skill.setId(resultSet.getLong("id"));
         skill.setName(resultSet.getString("name"));
+        skill.setStatus(Status.valueOf(resultSet.getString("status_id")));
         return skill;
     }
 

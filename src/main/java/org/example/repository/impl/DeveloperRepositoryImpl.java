@@ -70,7 +70,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         @Override
         public void update (Developer developer) {
-        String sql = "UPDATE Developer SET firstName = ?, lastName = ?, status_id =? WHERE id = ?";
+        String sql = "UPDATE Developer SET firstName = ?, lastName = ?, status_id = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, developer.getFirstName());
