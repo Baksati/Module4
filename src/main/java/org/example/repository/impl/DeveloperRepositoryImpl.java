@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.model.Developer;
+import org.example.model.Status;
 import org.example.repository.DeveloperRepository;
 import org.example.utils.DatabaseConnection;
 
@@ -44,12 +45,13 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         @Override
         public void save (Developer developer){
-            String sql = "INSERT INTO Developer (firstName, lastName) VALUES (?, ?)";
+            String sql = "INSERT INTO Developer (firstName, lastName, status_id) VALUES (?, ?, ?)";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement
                          (sql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, developer.getFirstName());
                 stmt.setString(2, developer.getLastName());
+                stmt.setString(3, developer.getStatus().name());
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows > 0) {
                     System.out.println("Новый разработчик успешно добавлен");
@@ -68,20 +70,21 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         @Override
         public void update (Developer developer) {
-        String sql = "UPDATE Developer SET firstName = ?, lastName = ? WHERE id = ?";
+        String sql = "UPDATE Developer SET firstName = ?, lastName = ?, status_id =? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 stmt.setString(1, developer.getFirstName());
-                 stmt.setString(2, developer.getLastName());
-                 stmt.setLong(3, developer.getId());
-                 int rowsUpdated = stmt.executeUpdate();
-                 if (rowsUpdated > 0) {
-                     System.out.println("Данные разработчика успешно обновлены");
-                 } else {
-                     System.out.println("Не удалось обновить данные разработчика");
-                 }
+            stmt.setString(1, developer.getFirstName());
+            stmt.setString(2, developer.getLastName());
+            stmt.setString(3, developer.getStatus().name());
+            stmt.setLong(4, developer.getId());
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Данные разработчика успешно обновлены");
+            } else {
+                System.out.println("Не удалось обновить данные разработчика");
+            }
         } catch (SQLException e) {
-                 e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -107,6 +110,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
             developer.setId(resultSet.getLong("id"));
             developer.setFirstName(resultSet.getString("firstName"));
             developer.setLastName(resultSet.getString("lastName"));
+            developer.setStatus(Status.valueOf(resultSet.getString("status_id")));
             return developer;
         }
     }
