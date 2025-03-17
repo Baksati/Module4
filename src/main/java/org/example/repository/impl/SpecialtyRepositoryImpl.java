@@ -4,10 +4,7 @@ import org.example.model.Specialty;
 import org.example.repository.SpecialtyRepository;
 import org.example.utils.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
-                specialties.add(mapRowToSkill(resultSet));
+                specialties.add(mapRowToSpecialty(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,25 +28,79 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
 
     @Override
     public Specialty getById(Long id) {
+        String sql = "SELECT * FROM Specialty WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return mapRowToSpecialty(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return new Specialty();
     }
 
     @Override
     public void save(Specialty specialty) {
-
+        String sql = "INSERT INTO Specialty (name) VALUES (?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement
+                     (sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, specialty.getName());
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Новая специальность разработчику успешно добавлена");
+            } else {
+                System.out.println("Не удалось добавить новую специальность разработчику");
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        specialty.setId(generatedKeys.getLong(1));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+                 e.printStackTrace();
+        }
     }
 
     @Override
     public void update(Specialty specialty) {
-
+        String sql = "UPDATE Specialty SET name = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                 stmt.setString(1, specialty.getName());
+                 stmt.setLong(2, specialty.getId());
+                 int rowsUpdated = stmt.executeUpdate();
+                 if (rowsUpdated > 0) {
+                     System.out.println("Данные специальности разработчика успешно обновлены");
+                 } else {
+                     System.out.println("Не удалось обновить специальность разработчика");
+                 }
+        } catch (SQLException e) {
+                 e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(Long id) {
-
+        String sql = "DELETE FROM Specialty WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            int rowsDeleted = stmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Специальность разработчика успешно удалена");
+            } else {
+                System.out.println("Не удалось удалить специальность разработчика");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private Specialty mapRowToSkill (ResultSet resultSet) throws SQLException {
+    private Specialty mapRowToSpecialty (ResultSet resultSet) throws SQLException {
         Specialty specialty = new Specialty();
         specialty.setId(resultSet.getLong("id"));
         specialty.setName(resultSet.getString("name"));
