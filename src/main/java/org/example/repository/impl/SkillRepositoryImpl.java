@@ -80,7 +80,7 @@ public class SkillRepositoryImpl implements SkillRepository {
                      System.out.println("Не удалось обновить навык разработчика");
                  }
         } catch (SQLException e) {
-                 e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

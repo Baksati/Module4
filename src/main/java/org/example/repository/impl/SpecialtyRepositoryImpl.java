@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.model.Specialty;
+import org.example.model.Status;
 import org.example.repository.SpecialtyRepository;
 import org.example.utils.DatabaseConnection;
 
@@ -44,11 +45,12 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
 
     @Override
     public void save(Specialty specialty) {
-        String sql = "INSERT INTO Specialty (name) VALUES (?)";
+        String sql = "INSERT INTO Specialty (name, status_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement
                      (sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, specialty.getName());
+            stmt.setString(2, specialty.getStatus().name());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("Новая специальность разработчику успешно добавлена");
@@ -67,19 +69,20 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
 
     @Override
     public void update(Specialty specialty) {
-        String sql = "UPDATE Specialty SET name = ? WHERE id = ?";
+        String sql = "UPDATE Specialty SET name = ?, status_id = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 stmt.setString(1, specialty.getName());
-                 stmt.setLong(2, specialty.getId());
-                 int rowsUpdated = stmt.executeUpdate();
-                 if (rowsUpdated > 0) {
-                     System.out.println("Данные специальности разработчика успешно обновлены");
-                 } else {
-                     System.out.println("Не удалось обновить специальность разработчика");
-                 }
+            stmt.setString(1, specialty.getName());
+            stmt.setString(2, specialty.getStatus().name());
+            stmt.setLong(3, specialty.getId());
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Данные специальности разработчика успешно обновлены");
+            } else {
+                System.out.println("Не удалось обновить специальность разработчика");
+            }
         } catch (SQLException e) {
-                 e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -104,6 +107,7 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
         Specialty specialty = new Specialty();
         specialty.setId(resultSet.getLong("id"));
         specialty.setName(resultSet.getString("name"));
+        specialty.setStatus(Status.valueOf(resultSet.getString("status_id")));
         return specialty;
     }
 }
