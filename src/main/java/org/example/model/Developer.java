@@ -11,8 +11,8 @@ public class Developer {
     private String firstName;
     private String lastName;
     private Status status;
-    private Specialty specialty;
-    private List<Skill> skills;
+    private String specialty;
+    private List<String> skills;
 
     @Override
     public String toString() {

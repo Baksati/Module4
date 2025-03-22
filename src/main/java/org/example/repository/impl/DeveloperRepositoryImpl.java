@@ -14,12 +14,20 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
     @Override
     public List<Developer> getAll() {
         List<Developer> developers = new ArrayList<>();
-        String sql = "SELECT * FROM Developer";
+        String sql = "SELECT d.id AS developer_id, d.firstName, d.lastName, d.status_id, " +
+                "sp.name AS specialty_name, sk.name AS skill_name " +
+                "FROM Developer d " +
+                "LEFT JOIN developer_specialty ds ON d.id = ds.developer_id " +
+                "LEFT JOIN Specialty sp ON ds.specialty_id = sp.id " +
+                "LEFT JOIN developer_skill dsk ON d.id = dsk.developer_id " +
+                "LEFT JOIN Skill sk ON dsk.skill_id = sk.id";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet resultSet = stmt.executeQuery();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet resultSet = stmt.executeQuery()) {
             while (resultSet.next()) {
-                developers.add(mapRowToDeveloper(resultSet));
+                Developer developer = mapRowToDeveloper(resultSet);
+                developers.add(developer);
+                System.out.println(developer);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,10 +115,12 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         private Developer mapRowToDeveloper (ResultSet resultSet) throws SQLException {
             Developer developer = new Developer();
-            developer.setId(resultSet.getLong("id"));
+            developer.setId(resultSet.getLong("developer_id"));
             developer.setFirstName(resultSet.getString("firstName"));
             developer.setLastName(resultSet.getString("lastName"));
             developer.setStatus(Status.valueOf(resultSet.getString("status_id")));
+            developer.setSpecialty(resultSet.getString("specialty_name"));
+            developer.setSkills(List.of(resultSet.getString("skill_name")));
             return developer;
         }
     }
