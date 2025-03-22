@@ -21,10 +21,11 @@ public class Developer {
                 "  \"firstName\": \"" + firstName + "\",\n" +
                 "  \"lastName\": \"" + lastName + "\",\n" +
                 "  \"status\": \"" + status + "\",\n" +
-                "  \"specialty\": " + (specialty != null ? specialty.toString().replaceAll("(?m)^", "    ") : "null") + ",\n" +
-                "  \"skills\": " + (skills != null ? "[\n" + skills.stream()
-                .map(skill -> "    " + skill.toString().replaceAll("(?m)^", "    "))
-                .collect(Collectors.joining(",\n")) + "\n  ]" : "[]") + "\n" +
+                "  \"specialty\": " + (specialty != null ? "\"" + specialty + "\"" : "null") + ",\n" +
+                "  \"skills\": " + (skills != null ?
+                skills.stream()
+                        .collect(Collectors.joining(", ", "\"", "\"")) // Убраны лишние кавычки
+                : "\"\"") + "\n" +
                 "}";
     }
 }
