@@ -45,7 +45,7 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
 
     @Override
     public void save(Specialty specialty) {
-        String sql = "INSERT INTO Specialty (name, status_id) VALUES (?, ?)";
+        String sql = "INSERT INTO Specialty (name, status) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement
                      (sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -69,7 +69,7 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
 
     @Override
     public void update(Specialty specialty) {
-        String sql = "UPDATE Specialty SET name = ?, status_id = ? WHERE id = ?";
+        String sql = "UPDATE Specialty SET name = ?, status = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, specialty.getName());
@@ -107,7 +107,7 @@ public class SpecialtyRepositoryImpl implements SpecialtyRepository {
         Specialty specialty = new Specialty();
         specialty.setId(resultSet.getLong("id"));
         specialty.setName(resultSet.getString("name"));
-        specialty.setStatus(Status.valueOf(resultSet.getString("status_id")));
+        specialty.setStatus(Status.valueOf(resultSet.getString("status")));
         return specialty;
     }
 }

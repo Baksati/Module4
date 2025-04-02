@@ -43,7 +43,7 @@ public class SkillRepositoryImpl implements SkillRepository {
 
     @Override
     public void save(Skill skill) {
-        String sql = "INSERT INTO Skill (name, status_id) VALUES (?, ?)";
+        String sql = "INSERT INTO Skill (name, status) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement
                      (sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -67,7 +67,7 @@ public class SkillRepositoryImpl implements SkillRepository {
 
     @Override
     public void update(Skill skill) {
-        String sql = "UPDATE Skill SET name = ?, status_id = ? WHERE id = ?";
+        String sql = "UPDATE Skill SET name = ?, status = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
                  stmt.setString(1, skill.getName());
@@ -105,7 +105,7 @@ public class SkillRepositoryImpl implements SkillRepository {
         Skill skill = new Skill();
         skill.setId(resultSet.getLong("id"));
         skill.setName(resultSet.getString("name"));
-        skill.setStatus(Status.valueOf(resultSet.getString("status_id")));
+        skill.setStatus(Status.valueOf(resultSet.getString("status")));
         return skill;
     }
 

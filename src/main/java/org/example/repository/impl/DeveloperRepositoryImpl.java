@@ -14,7 +14,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
     @Override
     public List<Developer> getAll() {
         List<Developer> developers = new ArrayList<>();
-        String sql = "SELECT d.id AS developer_id, d.firstName, d.lastName, d.status_id, " +
+        String sql = "SELECT d.id AS developer_id, d.firstName, d.lastName, d.status, " +
                 "sp.name AS specialty_name, sk.name AS skill_name " +
                 "FROM Developer d " +
                 "LEFT JOIN developer_specialty ds ON d.id = ds.developer_id " +
@@ -27,7 +27,6 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
             while (resultSet.next()) {
                 Developer developer = mapRowToDeveloper(resultSet);
                 developers.add(developer);
-                System.out.println(developer);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,7 +52,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         @Override
         public void save (Developer developer){
-            String sql = "INSERT INTO Developer (firstName, lastName, status_id) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Developer (firstName, lastName, status) VALUES (?, ?, ?)";
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement
                          (sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -78,7 +77,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
 
         @Override
         public void update (Developer developer) {
-        String sql = "UPDATE Developer SET firstName = ?, lastName = ?, status_id = ? WHERE id = ?";
+        String sql = "UPDATE Developer SET firstName = ?, lastName = ?, status = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, developer.getFirstName());
@@ -118,7 +117,7 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
             developer.setId(resultSet.getLong("developer_id"));
             developer.setFirstName(resultSet.getString("firstName"));
             developer.setLastName(resultSet.getString("lastName"));
-            developer.setStatus(Status.valueOf(resultSet.getString("status_id")));
+            developer.setStatus(Status.valueOf(resultSet.getString("status")));
             developer.setSpecialty(resultSet.getString("specialty_name"));
             developer.setSkills(List.of(resultSet.getString("skill_name")));
             return developer;
