@@ -3,48 +3,54 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.1.xsd">
-
-    <changeSet id="create-developer-table" author="alexey_lapshin" dbms="mysql">
+    
+    <changeSet id="create-skill-table" author="alexey_lapshin" dbms="mysql">
         <preConditions onFail="WARN">
             <not>
-                <tableExists tableName="Developer"/>
+                <tableExists tableName="Skill"/>
             </not>
             <dbms type="mysql"/>
         </preConditions>
 
-        <comment>Создание таблицы Developer и добавление тестовых данных</comment>
+        <comment>Создание таблицы Skill и добавление текстовых данных</comment>
 
-        <createTable tableName="Developer">
+        <createTable tableName="Skill">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="firstName" type="VARCHAR(30)"/>
-            <column name="lastName" type="VARCHAR(30)"/>
+            <column name="name" type="VARCHAR(30)"/>
             <column name="status" type="ENUM('ACTIVE', 'DELETED')" defaultValue="ACTIVE">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <insert tableName="Developer">
-            <column name="firstName" value="Тимур"/>
-            <column name="lastName" value="Брек"/>
+        <insert tableName="Skill">
+            <column name="name" value="BackEnd"/>
             <column name="status" value="ACTIVE"/>
         </insert>
 
-        <insert tableName="Developer">
-            <column name="firstName" value="Алексей"/>
-            <column name="lastName" value="Лапшин"/>
+        <insert tableName="Skill">
+            <column name="name" value="FrontEnd"/>
             <column name="status" value="ACTIVE"/>
         </insert>
 
-        <insert tableName="Developer">
-            <column name="firstName" value="Анатолий"/>
-            <column name="lastName" value="Лапшин"/>
+        <insert tableName="Skill">
+            <column name="name" value="FullStack"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <insert tableName="Skill">
+            <column name="name" value="DevOps"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <insert tableName="Skill">
+            <column name="name" value="BlockChain"/>
             <column name="status" value="ACTIVE"/>
         </insert>
 
         <rollback>
-            <dropTable tableName="Developer"/>
+            <dropTable tableName="Skill"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
