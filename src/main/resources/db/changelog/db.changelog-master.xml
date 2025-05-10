@@ -6,4 +6,5 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.1.xsd">
 
     <include file="changes/0001-create-developer-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/0002-create-skill-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
