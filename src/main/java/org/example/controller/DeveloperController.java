@@ -8,7 +8,15 @@ import java.util.List;
 
 public class DeveloperController {
 
-    private final DeveloperRepository developerRepository = new DeveloperRepositoryImpl();
+    private final DeveloperRepository developerRepository;
+
+    public DeveloperController() {
+        this.developerRepository = new DeveloperRepositoryImpl();
+    }
+
+    public DeveloperController(DeveloperRepository developerRepository) {
+        this.developerRepository = developerRepository;
+    }
 
     public List<Developer> getAllDevelopers() {
         return developerRepository.getAll();
