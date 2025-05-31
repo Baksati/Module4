@@ -2,39 +2,51 @@ package org.example.controller;
 
 import org.example.model.Developer;
 import org.example.repository.DeveloperRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class DeveloperControllerTest {
 
+    @Mock
+    private DeveloperRepository repo;
+
+    @InjectMocks
+    private DeveloperController controller;
+
+    private Developer testDeveloper;
+
+    @BeforeEach
+    void setUp() {
+        testDeveloper = new Developer();
+        testDeveloper.setId(1L);
+        testDeveloper.setFirstName("Алексей Лапшин");
+    }
+
     @Test
-    void testGetDeveloperById() {
-        DeveloperRepository repo = mock(DeveloperRepository.class);
-
-        DeveloperController controller = new DeveloperController(repo);
-
-        Developer testDev = new Developer();
-        testDev.setId(1L);
-        testDev.setFirstName("Алексей Лапшин");
-
-        when(repo.getById(1L)).thenReturn(testDev);
+    void shouldReturnDeveloperWhenExists() {
+        when(repo.getById(1L)).thenReturn(testDeveloper);
 
         Developer result = controller.getDeveloperById(1L);
 
+        assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("Алексей Лапшин", result.getFirstName());
     }
 
     @Test
-    void testGetNonExistentDeveloper() {
-        DeveloperRepository repo = mock(DeveloperRepository.class);
-
-        DeveloperController controller = new DeveloperController(repo);
-
+    void shouldReturnNullWhenNotExists() {
         when(repo.getById(999L)).thenReturn(null);
 
-        assertNull(controller.getDeveloperById(999L));
+        Developer result = controller.getDeveloperById(999L);
+
+        assertNull(result);
     }
 }
