@@ -3,46 +3,23 @@ package org.example.controller;
 import org.example.model.Developer;
 import org.example.repository.DeveloperRepository;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DeveloperControllerTest {
 
-    static class TestRepo implements DeveloperRepository {
-        Developer testDeveloper;
-
-        @Override
-        public Developer getById(Long id) {
-            return testDeveloper;
-        }
-
-        @Override
-        public List<Developer> getAll() {
-            return null;
-        }
-        @Override
-        public void save(Developer developer) {
-        }
-        @Override
-        public void update(Developer developer) {
-        }
-        @Override
-        public void delete(Long id) {
-        }
-    }
-
     @Test
     void testGetDeveloperById() {
-        TestRepo testRepo = new TestRepo();
-        DeveloperController controller = new DeveloperController(testRepo);
+        DeveloperRepository repo = mock(DeveloperRepository.class);
 
-        Developer testDeveloper = new Developer();
-        testDeveloper.setId(1L);
-        testDeveloper.setFirstName("Алексей Лапшин");
+        DeveloperController controller = new DeveloperController(repo);
 
-        testRepo.testDeveloper = testDeveloper;
+        Developer testDev = new Developer();
+        testDev.setId(1L);
+        testDev.setFirstName("Алексей Лапшин");
+
+        when(repo.getById(1L)).thenReturn(testDev);
 
         Developer result = controller.getDeveloperById(1L);
 
@@ -52,11 +29,12 @@ public class DeveloperControllerTest {
 
     @Test
     void testGetNonExistentDeveloper() {
-        TestRepo testRepo = new TestRepo();
-        DeveloperController controller = new DeveloperController(testRepo);
+        DeveloperRepository repo = mock(DeveloperRepository.class);
 
-        Developer result = controller.getDeveloperById(999L);
+        DeveloperController controller = new DeveloperController(repo);
 
-        assertNull(result);
+        when(repo.getById(999L)).thenReturn(null);
+
+        assertNull(controller.getDeveloperById(999L));
     }
 }
