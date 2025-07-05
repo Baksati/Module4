@@ -112,14 +112,21 @@ public class DeveloperRepositoryImpl implements DeveloperRepository {
             }
         }
 
-        private Developer mapRowToDeveloper (ResultSet resultSet) throws SQLException {
-            Developer developer = new Developer();
-            developer.setId(resultSet.getLong("developer_id"));
-            developer.setFirstName(resultSet.getString("firstName"));
-            developer.setLastName(resultSet.getString("lastName"));
-            developer.setStatus(Status.valueOf(resultSet.getString("status")));
-            developer.setSpecialty(resultSet.getString("specialty_name"));
-            developer.setSkills(List.of(resultSet.getString("skill_name")));
-            return developer;
-        }
+    private Developer mapRowToDeveloper(ResultSet resultSet) throws SQLException {
+        Developer developer = new Developer();
+        developer.setId(resultSet.getLong("developer_id"));
+        developer.setFirstName(resultSet.getString("firstName"));
+        developer.setLastName(resultSet.getString("lastName"));
+        developer.setStatus(Status.valueOf(resultSet.getString("status")));
+
+        // Обработка specialty (может быть null)
+        String specialty = resultSet.getString("specialty_name");
+        developer.setSpecialty(specialty != null ? specialty : "");
+
+        // Обработка skills (может быть null)
+        String skillName = resultSet.getString("skill_name");
+        developer.setSkills(skillName != null ? List.of(skillName) : List.of());
+
+        return developer;
+    }
     }
